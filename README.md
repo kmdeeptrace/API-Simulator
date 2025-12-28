@@ -328,7 +328,7 @@ Edit `src/utils/errors.js` to adjust:
 
 | Environment Variable | Default | Description |
 |---------------------|---------|-------------|
-| `PORT` | `3001` | Server port |
+| `PORT` | `8000` | Server port |
 
 ---
 

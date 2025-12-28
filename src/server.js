@@ -26,6 +26,38 @@ fastify.addHook('onResponse', async (request, reply) => {
   console.log(`${method.padEnd(6)} ${url.padEnd(50)} ${statusColor}${status}\x1b[0m ${responseTime}ms`);
 });
 
+// Bearer token authentication middleware
+fastify.addHook('preHandler', async (request, reply) => {
+  // Skip auth for docs endpoints, root, and health check
+  if (request.url.startsWith('/api/docs') || request.url === '/' || request.url === '/health') {
+    return;
+  }
+
+  const auth = request.headers.authorization;
+
+  // Check for Bearer token
+  if (!auth || !auth.startsWith('Bearer ')) {
+    return reply.code(401).send({
+      error: 'Unauthorized',
+      message: 'Missing or invalid Authorization header. Use: Authorization: Bearer <token>'
+    });
+  }
+
+  // Extract token (we don't validate it, just check it exists)
+  const token = auth.substring(7); // Remove "Bearer "
+
+  if (!token || token.trim().length === 0) {
+    return reply.code(401).send({
+      error: 'Unauthorized',
+      message: 'Bearer token is empty'
+    });
+  }
+
+  // Token exists, allow request through
+  // For testing we accept any token
+  request.token = token;
+});
+
 // Register routes with prefixes
 fastify.register(easyRoutes, { prefix: '/api/easy' });
 fastify.register(mediumRoutes, { prefix: '/api/medium' });

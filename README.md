@@ -28,6 +28,33 @@ npm start
 # Server runs at http://localhost:8000
 ```
 
+## Authentication
+
+All API endpoints (except `/api/docs`, `/`, and `/health`) require Bearer token authentication:
+
+```bash
+curl -H "Authorization: Bearer any-token-works" \
+  http://localhost:8000/api/medium/users
+```
+
+For testing, **any token value is accepted**. The server only checks that:
+1. `Authorization` header exists
+2. Has format: `Bearer <token>`
+3. Token is non-empty
+
+Example tokens that work:
+- `Bearer test`
+- `Bearer mock-api-token`
+- `Bearer 12345`
+
+Requests without valid auth will receive:
+```json
+{
+  "error": "Unauthorized",
+  "message": "Missing or invalid Authorization header. Use: Authorization: Bearer <token>"
+}
+```
+
 ## Endpoints Overview
 
 | Tier | Prefix | Description |
